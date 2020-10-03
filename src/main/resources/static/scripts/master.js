@@ -1,3 +1,10 @@
+document.addEventListener("DOMContentLoaded", () => {
+	const signOutActionElement = getSignOutActionElement();
+	if (signOutActionElement != null) {
+		signOutActionElement.addEventListener("click", signOutActionClickHandler);
+	}
+});
+
 // AJAX
 function ajaxGet(resourceRelativeUri, callback) {
 	return ajax(resourceRelativeUri, "GET", null, callback);
