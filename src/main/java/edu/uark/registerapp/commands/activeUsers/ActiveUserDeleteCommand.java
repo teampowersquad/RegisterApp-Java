@@ -12,12 +12,14 @@ import edu.uark.registerapp.models.repositories.ActiveUserRepository;
 
 @Service
 public class ActiveUserDeleteCommand implements VoidCommandInterface {
+	// Transaction to delete the activeuser record
 	@Transactional
 	@Override
 	public void execute() {
 		final Optional<ActiveUserEntity> activeUserEntity =
 			this.activeUserRepository.findBySessionKey(this.sessionKey);
 
+		// Validation of incoming employee request object within EmployeeSignInCommand
 		if (activeUserEntity.isPresent()) {
 			this.activeUserRepository.delete(activeUserEntity.get());
 		}
