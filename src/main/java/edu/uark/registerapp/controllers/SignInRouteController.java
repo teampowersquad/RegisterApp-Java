@@ -17,6 +17,7 @@ import edu.uark.registerapp.commands.employees.EmployeeSignInCommand;
 import edu.uark.registerapp.controllers.enums.QueryParameterNames;
 import edu.uark.registerapp.controllers.enums.ViewModelNames;
 import edu.uark.registerapp.controllers.enums.ViewNames;
+import edu.uark.registerapp.models.api.EmployeeSignIn;
 
 @Controller
 @RequestMapping(value = "/")
@@ -49,13 +50,32 @@ public class SignInRouteController extends BaseRouteController {
 
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ModelAndView performSignIn(
-		// TODO: Define an object that will represent the sign in request and add it as a parameter here
+        // TODO: Define an object that will represent the sign in request and add it as a parameter here
+        EmployeeSignIn employeeSignIn,
 		HttpServletRequest request
 	) {
 
 		// TODO: Use the credentials provided in the request body
 		//  and the "id" property of the (HttpServletRequest)request.getSession() variable
-		//  to sign in the user
+        //  to sign in the user
+        try {
+			this.employeeSignInCommand
+				.setSessionId(request.getSession().getId())
+				.setEmployeeSignIn(employeeSignIn)
+				.execute();
+		} catch (Exception e) {
+			ModelAndView modelAndView =
+				new ModelAndView(ViewNames.SIGN_IN.getViewName());
+
+			modelAndView.addObject(
+				ViewModelNames.ERROR_MESSAGE.getValue(),
+				e.getMessage());
+			modelAndView.addObject(
+				ViewModelNames.EMPLOYEE_ID.getValue(),
+				employeeSignIn.getEmployeeId());
+
+			return modelAndView;
+		}
 
 		return new ModelAndView(
 			REDIRECT_PREPEND.concat(
