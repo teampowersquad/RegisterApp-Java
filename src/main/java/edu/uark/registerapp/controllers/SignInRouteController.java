@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.uark.registerapp.commands.employees.ActiveEmployeeExistsQuery;
 import edu.uark.registerapp.commands.employees.EmployeeSignInCommand;
+import edu.uark.registerapp.commands.exceptions.NotFoundException;
 import edu.uark.registerapp.controllers.enums.QueryParameterNames;
 import edu.uark.registerapp.controllers.enums.ViewModelNames;
 import edu.uark.registerapp.controllers.enums.ViewNames;
@@ -31,9 +32,9 @@ public class SignInRouteController extends BaseRouteController {
         try {
             this.activeEmployeeExistsQuery.execute();
         } catch (NotFoundException e) {
-            return (new ModelAndView(
+            return new ModelAndView(
                 REDIRECT_PREPEND.concat(
-                    ViewNames.EMPLOYEE_DETAIL.getRoute()));          )
+                    ViewNames.EMPLOYEE_DETAIL.getRoute()));          
         }
         ModelAndView modelAndView =
             this.setErrorMessageFromQueryString(
