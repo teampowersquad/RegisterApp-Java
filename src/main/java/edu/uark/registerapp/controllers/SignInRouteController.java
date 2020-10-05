@@ -83,7 +83,6 @@ public class SignInRouteController extends BaseRouteController {
 				ViewNames.MAIN_MENU.getRoute()));
     }
     
-
     // Properties
 	@Autowired
 	private EmployeeSignInCommand employeeSignInCommand;

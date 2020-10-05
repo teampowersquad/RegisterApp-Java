@@ -29,7 +29,7 @@ public class EmployeeSignInCommand implements ResultCommandInterface<Employee> {
 		return new Employee(this.SignInEmployee());
 	}
 
-	// Helper methods
+	// Helper methods - validate the incoming request object
 	private void validateProperties() {
 		if (StringUtils.isBlank(this.employeeSignIn.getEmployeeId())) {
 			throw new UnprocessableEntityException("employee ID");
@@ -44,6 +44,7 @@ public class EmployeeSignInCommand implements ResultCommandInterface<Employee> {
 		}
 	}
 
+	// findByEmployeeId == queryByEmployeeId
 	@Transactional
 	private EmployeeEntity SignInEmployee() {
 		final Optional<EmployeeEntity> employeeEntity =
