@@ -173,3 +173,17 @@ function getErrorMessageDisplayElement() {
 	return document.getElementById("errorMessage");
 }
 // End getters and setters
+//Sign out
+function signOutActionClickHandler() {
+	ajaxDelete("/api/signOut", (callbackResponse) => {
+		if ((callbackResponse.data != null)
+			&& (callbackResponse.data.redirectUrl != null)
+			&& (callbackResponse.data.redirectUrl !== "")) {
+	
+			window.location.replace(callbackResponse.data.redirectUrl);
+		} else {
+			window.location.replace("/");
+		}
+	});
+}
+//End sign out
