@@ -165,6 +165,10 @@ function displayError(errorMessage) {
 // End display error message
 
 //Getters and setters
+function getSignOutActionElement() {
+	return document.getElementById("signOutImage");
+}
+
 function getErrorMessageContainerElement() {
 	return document.getElementById("error");
 }
@@ -173,6 +177,7 @@ function getErrorMessageDisplayElement() {
 	return document.getElementById("errorMessage");
 }
 // End getters and setters
+
 //Sign out
 function signOutActionClickHandler() {
 	ajaxDelete("/api/signOut", (callbackResponse) => {
