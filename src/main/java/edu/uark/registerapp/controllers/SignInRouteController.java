@@ -21,10 +21,15 @@ import edu.uark.registerapp.controllers.enums.ViewNames;
 import edu.uark.registerapp.models.api.EmployeeSignIn;
 
 @Controller
+// Define a route handler for requesting the view/document
 @RequestMapping(value = "/")
 public class SignInRouteController extends BaseRouteController {
-    // Route for initial page load
-
+    // Properties
+	@Autowired
+	private EmployeeSignInCommand employeeSignInCommand;
+	@Autowired
+    private ActiveEmployeeExistsQuery activeEmployeeExistsQuery;
+    
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView showSignIn(
         @RequestParam final Map<String, String> queryParameters
@@ -32,19 +37,18 @@ public class SignInRouteController extends BaseRouteController {
         try {
             this.activeEmployeeExistsQuery.execute();
         } catch (NotFoundException e) {
-            return new ModelAndView(
-                REDIRECT_PREPEND.concat(
-                    ViewNames.EMPLOYEE_DETAIL.getRoute()));          
+            return new ModelAndView(REDIRECT_PREPEND.concat(ViewNames.EMPLOYEE_DETAIL.getRoute()));          
         }
         ModelAndView modelAndView =
             this.setErrorMessageFromQueryString(
                 new ModelAndView(ViewNames.SIGN_IN.getViewName()),
                 queryParameters);
-        
+        // If correct paramaters, add employee id
         if (queryParameters.containsKey(QueryParameterNames.EMPLOYEE_ID.getValue())) {
             modelAndView.addObject(
                 ViewModelNames.EMPLOYEE_ID.getValue(),
-                queryParameters.get(QueryParameterNames.EMPLOYEE_ID.getValue()));
+                queryParameters.get(QueryParameterNames.EMPLOYEE_ID.getValue())
+            );
         }
         return modelAndView;
     }
@@ -55,38 +59,22 @@ public class SignInRouteController extends BaseRouteController {
         EmployeeSignIn employeeSignIn,
 		HttpServletRequest request
 	) {
-
-		//  Use the credentials provided in the request body
-		//  and the "id" property of the (HttpServletRequest)request.getSession() variable
-        //  to sign in the user
+		//  Use the credentials provided in the request body and
+		//  the "id" property of (HttpServletRequest)request.getSession() variable to sign in the user
         try {
 			this.employeeSignInCommand
 				.setSessionId(request.getSession().getId())
 				.setEmployeeSignIn(employeeSignIn)
 				.execute();
 		} catch (Exception e) {
-			ModelAndView modelAndView =
-				new ModelAndView(ViewNames.SIGN_IN.getViewName());
-
-			modelAndView.addObject(
-				ViewModelNames.ERROR_MESSAGE.getValue(),
-				e.getMessage());
+			ModelAndView modelAndView = new ModelAndView(ViewNames.SIGN_IN.getViewName());
+			modelAndView.addObject(ViewModelNames.ERROR_MESSAGE.getValue(), e.getMessage());
 			modelAndView.addObject(
 				ViewModelNames.EMPLOYEE_ID.getValue(),
-				employeeSignIn.getEmployeeId());
-
+                employeeSignIn.getEmployeeId()
+            );
 			return modelAndView;
 		}
-
-		return new ModelAndView(
-			REDIRECT_PREPEND.concat(
-				ViewNames.MAIN_MENU.getRoute()));
+		return new ModelAndView(REDIRECT_PREPEND.concat(ViewNames.MAIN_MENU.getRoute()));
     }
-    
-    // Properties
-	@Autowired
-	private EmployeeSignInCommand employeeSignInCommand;
-
-	@Autowired
-	private ActiveEmployeeExistsQuery activeEmployeeExistsQuery;
 }

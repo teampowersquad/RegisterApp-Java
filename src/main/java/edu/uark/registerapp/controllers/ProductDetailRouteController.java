@@ -23,8 +23,13 @@ import edu.uark.registerapp.models.entities.ActiveUserEntity;
 import edu.uark.registerapp.models.enums.EmployeeClassification;
 
 @Controller
+// Define a route handler for requesting the view/document
 @RequestMapping(value = "/productDetail")
 public class ProductDetailRouteController extends BaseRouteController {
+	// Properties
+	@Autowired
+	private ProductQuery productQuery;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView start(
 		@RequestParam final Map<String, String> queryParameters,
@@ -35,22 +40,15 @@ public class ProductDetailRouteController extends BaseRouteController {
 		if (!activeUserEntity.isPresent()) {
 			return this.buildInvalidSessionResponse();
 		} else if (!this.isElevatedUser(activeUserEntity.get())) {
-			return this.buildNoPermissionsResponse(
-				ViewNames.PRODUCT_LISTING.getRoute());
+			return this.buildNoPermissionsResponse(ViewNames.PRODUCT_LISTING.getRoute());
 		}
-
 		final ModelAndView modelAndView =
 			this.setErrorMessageFromQueryString(
 				new ModelAndView(ViewNames.PRODUCT_DETAIL.getViewName()),
 				queryParameters);
-
-		modelAndView.addObject(
-			ViewModelNames.IS_ELEVATED_USER.getValue(),
-			true);
-		modelAndView.addObject(
-			ViewModelNames.PRODUCT.getValue(),
+		modelAndView.addObject(ViewModelNames.IS_ELEVATED_USER.getValue(), true);
+		modelAndView.addObject(ViewModelNames.PRODUCT.getValue(),
 			(new Product()).setLookupCode(StringUtils.EMPTY).setCount(0));
-
 		return modelAndView;
 	}
 
@@ -58,25 +56,20 @@ public class ProductDetailRouteController extends BaseRouteController {
 	public ModelAndView startWithProduct(
 		@PathVariable final UUID productId,
 		@RequestParam final Map<String, String> queryParameters,
-		final HttpServletRequest request
+		final HttpServletRequest request // Use this to access the current session and associated user
 	) {
-
-		final Optional<ActiveUserEntity> activeUserEntity =
-			this.getCurrentUser(request);
+		final Optional<ActiveUserEntity> activeUserEntity = this.getCurrentUser(request);
 		if (!activeUserEntity.isPresent()) {
 			return this.buildInvalidSessionResponse();
 		}
-
 		final ModelAndView modelAndView =
 			this.setErrorMessageFromQueryString(
 				new ModelAndView(ViewNames.PRODUCT_DETAIL.getViewName()),
 				queryParameters);
-
 		modelAndView.addObject(
 			ViewModelNames.IS_ELEVATED_USER.getValue(),
 			EmployeeClassification.isElevatedUser(
 				activeUserEntity.get().getClassification()));
-
 		try {
 			modelAndView.addObject(
 				ViewModelNames.PRODUCT.getValue(),
@@ -91,11 +84,6 @@ public class ProductDetailRouteController extends BaseRouteController {
 					.setCount(0)
 					.setLookupCode(StringUtils.EMPTY));
 		}
-
 		return modelAndView;
 	}
-
-	// Properties
-	@Autowired
-	private ProductQuery productQuery;
 }

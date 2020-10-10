@@ -19,29 +19,30 @@ import edu.uark.registerapp.models.api.Product;
 import edu.uark.registerapp.models.entities.ActiveUserEntity;
 
 @Controller
+// Define a route handler for requesting the view/document
 @RequestMapping(value = "/productListing")
 public class ProductListingRouteController extends BaseRouteController {
+	// Properties
+	@Autowired
+	private ProductsQuery productsQuery;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showProductListing(
 		@RequestParam final Map<String, String> queryParameters,
 		final HttpServletRequest request
 	) {
-
 		final Optional<ActiveUserEntity> activeUserEntity =
 			this.getCurrentUser(request);
 		if (!activeUserEntity.isPresent()) {
 			return buildInvalidSessionResponse();
 		}
-
 		ModelAndView modelAndView =
 			this.setErrorMessageFromQueryString(
 				new ModelAndView(ViewNames.PRODUCT_LISTING.getViewName()),
 				queryParameters);
-
 		modelAndView.addObject(
 			ViewModelNames.IS_ELEVATED_USER.getValue(),
 			this.isElevatedUser(activeUserEntity.get()));
-
 		try {
 			modelAndView.addObject(
 				ViewModelNames.PRODUCTS.getValue(),
@@ -54,11 +55,6 @@ public class ProductListingRouteController extends BaseRouteController {
 				ViewModelNames.PRODUCTS.getValue(),
 				(new Product[0]));
 		}
-		
 		return modelAndView;
 	}
-
-	// Properties
-	@Autowired
-	private ProductsQuery productsQuery;
 }

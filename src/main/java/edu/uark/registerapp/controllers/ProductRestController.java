@@ -22,28 +22,32 @@ import edu.uark.registerapp.models.api.ApiResponse;
 import edu.uark.registerapp.models.api.Product;
 
 @RestController
+// Define a route handler for requesting the view/document
 @RequestMapping(value = "/api/product")
 public class ProductRestController extends BaseRestController {
+	// Properties
+	@Autowired
+	private ProductCreateCommand productCreateCommand;
+	@Autowired
+	private ProductDeleteCommand productDeleteCommand;	
+	@Autowired
+	private ProductUpdateCommand productUpdateCommand;
+
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public @ResponseBody ApiResponse createProduct(
 		@RequestBody final Product product,
 		final HttpServletRequest request,
 		final HttpServletResponse response
 	) {
-
 		final ApiResponse elevatedUserResponse =
 			this.redirectUserNotElevated(
 				request,
 				response,
 				ViewNames.PRODUCT_LISTING.getRoute());
-
 		if (!elevatedUserResponse.getRedirectUrl().equals(StringUtils.EMPTY)) {
 			return elevatedUserResponse;
 		}
-
-		return this.productCreateCommand
-			.setApiProduct(product)
-			.execute();
+		return this.productCreateCommand.setApiProduct(product).execute();
 	}
 
 	@RequestMapping(value = "/{productId}", method = RequestMethod.PUT)
@@ -53,21 +57,15 @@ public class ProductRestController extends BaseRestController {
 		final HttpServletRequest request,
 		final HttpServletResponse response
 	) {
-
 		final ApiResponse elevatedUserResponse =
 			this.redirectUserNotElevated(
 				request,
 				response,
 				ViewNames.PRODUCT_LISTING.getRoute());
-
 		if (!elevatedUserResponse.getRedirectUrl().equals(StringUtils.EMPTY)) {
 			return elevatedUserResponse;
 		}
-
-		return this.productUpdateCommand
-			.setProductId(productId)
-			.setApiProduct(product)
-			.execute();
+		return this.productUpdateCommand.setProductId(productId).setApiProduct(product).execute();
 	}
 
 	@RequestMapping(value = "/{productId}", method = RequestMethod.DELETE)
@@ -76,31 +74,17 @@ public class ProductRestController extends BaseRestController {
 		final HttpServletRequest request,
 		final HttpServletResponse response
 	) {
-
 		final ApiResponse elevatedUserResponse =
 			this.redirectUserNotElevated(
 				request,
 				response,
 				ViewNames.PRODUCT_LISTING.getRoute());
-
 		if (!elevatedUserResponse.getRedirectUrl().equals(StringUtils.EMPTY)) {
 			return elevatedUserResponse;
 		}
-
 		this.productDeleteCommand
 			.setProductId(productId)
 			.execute();
-
 		return new ApiResponse();
 	}
-
-	// Properties
-	@Autowired
-	private ProductCreateCommand productCreateCommand;
-	
-	@Autowired
-	private ProductDeleteCommand productDeleteCommand;
-	
-	@Autowired
-	private ProductUpdateCommand productUpdateCommand;
 }
