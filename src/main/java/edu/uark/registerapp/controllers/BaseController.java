@@ -1,19 +1,11 @@
 package edu.uark.registerapp.controllers;
 
 public abstract class BaseController {
-	protected String buildInitialQueryParameter(
-		final String name,
-		final String value
-	) {
-
+	protected String buildInitialQueryParameter(final String name, final String value) {
 		return this.buildQueryParameter(name, value, true);
 	}
 
-	protected String buildAdditionalQueryParameter(
-		final String name,
-		final String value
-	) {
-
+	protected String buildAdditionalQueryParameter(final String name, final String value) {
 		return this.buildQueryParameter(name, value, false);
 	}
 
@@ -23,10 +15,10 @@ public abstract class BaseController {
 		final String value,
 		final boolean isInitial
 	) {
-
 		return (isInitial ? "?" : "&")
 			.concat(name)
 			.concat("=")
 			.concat(value);
 	}
 }
+

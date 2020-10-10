@@ -23,39 +23,43 @@ import edu.uark.registerapp.controllers.enums.ViewNames;
 import edu.uark.registerapp.models.api.ApiResponse;
 import edu.uark.registerapp.models.api.Employee;
 
+// Define a route handler to create a new employee
 @RestController
 @RequestMapping(value = "/api/employee")
 public class EmployeeRestController extends BaseRestController {
+	// Properties
+	@Autowired
+	private EmployeeCreateCommand employeeCreateCommand;
+	@Autowired
+	private EmployeeUpdateCommand employeeUpdateCommand;
+	@Autowired
+	private ActiveEmployeeExistsQuery activeEmployeeExistsQuery;
+
+	// Create the employee using the details provided in the parameters
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public @ResponseBody ApiResponse createEmployee(
 		@RequestBody final Employee employee,
 		final HttpServletRequest request,
 		final HttpServletResponse response
 	) {
-
 		boolean isInitialEmployee = false;
 		ApiResponse canCreateEmployeeResponse;
-
 		try {
 			this.activeEmployeeExistsQuery.execute();
-
-			canCreateEmployeeResponse =
-				this.redirectUserNotElevated(request, response);
+			canCreateEmployeeResponse = this.redirectUserNotElevated(request, response);
 		} catch (final NotFoundException e) {
 			isInitialEmployee = true;
 			canCreateEmployeeResponse = new ApiResponse();
 		}
-
 		if (!canCreateEmployeeResponse.getRedirectUrl().equals(StringUtils.EMPTY)) {
 			return canCreateEmployeeResponse;
 		}
-
 		final Employee createdEmployee =
 			this.employeeCreateCommand
 				.setApiEmployee(employee)
 				.setIsInitialEmployee(isInitialEmployee)
 				.execute();
-
+		// If is the very first employee then should redirect to the Sign In view/document
 		if (isInitialEmployee) {
 			createdEmployee
 				.setRedirectUrl(
@@ -64,7 +68,6 @@ public class EmployeeRestController extends BaseRestController {
 							QueryParameterNames.EMPLOYEE_ID.getValue(),
 							createdEmployee.getEmployeeId())));
 		}
-
 		return createdEmployee.setIsInitialEmployee(isInitialEmployee);
 	}
 
@@ -75,26 +78,10 @@ public class EmployeeRestController extends BaseRestController {
 		final HttpServletRequest request,
 		final HttpServletResponse response
 	) {
-
-		final ApiResponse elevatedUserResponse =
-			this.redirectUserNotElevated(request, response);
+		final ApiResponse elevatedUserResponse = this.redirectUserNotElevated(request, response);
 		if (!elevatedUserResponse.getRedirectUrl().equals(StringUtils.EMPTY)) {
 			return elevatedUserResponse;
 		}
-
-		return this.employeeUpdateCommand
-			.setEmployeeId(employeeId)
-			.setApiEmployee(employee)
-			.execute();
+		return this.employeeUpdateCommand.setEmployeeId(employeeId).setApiEmployee(employee).execute();
 	}
-
-	// Properties
-	@Autowired
-	private EmployeeCreateCommand employeeCreateCommand;
-	
-	@Autowired
-	private EmployeeUpdateCommand employeeUpdateCommand;
-	
-	@Autowired
-	private ActiveEmployeeExistsQuery activeEmployeeExistsQuery;
 }

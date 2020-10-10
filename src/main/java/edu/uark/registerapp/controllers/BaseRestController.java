@@ -21,10 +21,12 @@ import edu.uark.registerapp.models.entities.ActiveUserEntity;
 import edu.uark.registerapp.models.enums.EmployeeClassification;
 
 public class BaseRestController extends BaseController {
-	protected ApiResponse redirectSessionNotActive(
-		final HttpServletResponse response
-	) {
+	// Properties
+	@Autowired
+	private ValidateActiveUserCommand validateActiveUserCommand;
 
+	// If user is empty, the user is not active
+	protected ApiResponse redirectSessionNotActive(final HttpServletResponse response) {
 		response.setStatus(HttpStatus.FOUND.value());
 		return (new ApiResponse())
 			.setRedirectUrl(
@@ -34,31 +36,27 @@ public class BaseRestController extends BaseController {
 						QueryParameterMessages.SESSION_NOT_ACTIVE.getKeyAsString())));
 	}
 
+	// If user not elevated, return function that sets it
 	protected ApiResponse redirectUserNotElevated(
 		final HttpServletRequest request,
 		final HttpServletResponse response
 	) {
-
 		return this.redirectUserNotElevated(request, response, ViewNames.MAIN_MENU.getRoute());
 	}
 
+	// Setter for creating active user
 	protected ApiResponse redirectUserNotElevated(
 		final HttpServletRequest request,
 		final HttpServletResponse response,
 		final String redirectRoute
 	) {
-
 		try {
 			final ActiveUserEntity activeUserEntity =
-				this.validateActiveUserCommand
-					.setSessionKey(request.getSession().getId())
-					.execute();
-
+				this.validateActiveUserCommand.setSessionKey(request.getSession().getId()).execute();
 			if (activeUserEntity == null) {
 				return this.redirectSessionNotActive(response);
 			} else if (!EmployeeClassification.isElevatedUser(activeUserEntity.getClassification())) {
 				response.setStatus(HttpStatus.FOUND.value());
-
 				return (new ApiResponse())
 					.setRedirectUrl(
 						redirectRoute.concat(
@@ -69,21 +67,19 @@ public class BaseRestController extends BaseController {
 		} catch (final UnauthorizedException e) {
 			return this.redirectSessionNotActive(response);
 		}
-
 		return new ApiResponse();
 	}
 
+	// Catch exceptions
 	@ExceptionHandler({
 		ConflictException.class,
 		NotFoundException.class,
 		UnauthorizedException.class,
 		UnprocessableEntityException.class
 	})
+
+	// Handle each exception
 	public @ResponseBody ApiResponse handleError(final Exception e) {
 		return (new ApiResponse()).setErrorMessage(e.getMessage());
 	}
-
-	// Properties
-	@Autowired
-	private ValidateActiveUserCommand validateActiveUserCommand;
 }

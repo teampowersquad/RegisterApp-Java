@@ -26,6 +26,12 @@ import edu.uark.registerapp.models.entities.ActiveUserEntity;
 @Controller
 @RequestMapping(value = "/employeeDetail")
 public class EmployeeDetailRouteController extends BaseRouteController {
+	// Properties
+	@Autowired
+	private EmployeeQuery employeeQuery;
+	@Autowired
+	private ActiveEmployeeExistsQuery activeEmployeeExistsQuery;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView start(
 		@RequestParam final Map<String, String> queryParameters,
@@ -48,22 +54,20 @@ public class EmployeeDetailRouteController extends BaseRouteController {
 		return this.buildStartResponse(!activeUserExists, queryParameters);
 	}
 
+	// Define a route handler for requesting the view/document
 	@RequestMapping(value = "/{employeeId}", method = RequestMethod.GET)
 	public ModelAndView startWithEmployee(
 		@PathVariable final UUID employeeId,
 		@RequestParam final Map<String, String> queryParameters,
 		final HttpServletRequest request
 	) {
-
-		final Optional<ActiveUserEntity> activeUserEntity =
-			this.getCurrentUser(request);
-
+		final Optional<ActiveUserEntity> activeUserEntity = this.getCurrentUser(request);
+		// Check if user is there
 		if (!activeUserEntity.isPresent()) {
 			return this.buildInvalidSessionResponse();
 		} else if (!this.isElevatedUser(activeUserEntity.get())) {
 			return this.buildNoPermissionsResponse();
 		}
-
 		return this.buildStartResponse(employeeId, queryParameters);
 	}
 
@@ -81,65 +85,48 @@ public class EmployeeDetailRouteController extends BaseRouteController {
 		final boolean isInitialEmployee,
 		final Map<String, String> queryParameters
 	) {
-
-		return this.buildStartResponse(
-			isInitialEmployee,
-			(new UUID(0, 0)),
-			queryParameters);
+		return this.buildStartResponse(isInitialEmployee, (new UUID(0, 0)), queryParameters);
 	}
 
 	private ModelAndView buildStartResponse(
 		final UUID employeeId,
 		final Map<String, String> queryParameters
 	) {
-
 		return this.buildStartResponse(false, employeeId, queryParameters);
 	}
 
+	// Function considers if employee Id is new or not and creates new if not
 	private ModelAndView buildStartResponse(
 		final boolean isInitialEmployee,
 		final UUID employeeId,
 		final Map<String, String> queryParameters
 	) {
-
 		ModelAndView modelAndView =
 			this.setErrorMessageFromQueryString(
 				new ModelAndView(ViewNames.EMPLOYEE_DETAIL.getViewName()),
 				queryParameters);
 
 		if (employeeId.equals(new UUID(0, 0))) {
-			modelAndView.addObject(
-				ViewModelNames.EMPLOYEE.getValue(),
+			modelAndView.addObject(ViewModelNames.EMPLOYEE.getValue(),
 				(new Employee()).setIsInitialEmployee(isInitialEmployee));
 		} else {
 			try {
-				modelAndView.addObject(
-					ViewModelNames.EMPLOYEE.getValue(),
+				modelAndView.addObject(ViewModelNames.EMPLOYEE.getValue(),
 					this.employeeQuery
 						.setEmployeeId(employeeId)
 						.execute()
 						.setIsInitialEmployee(isInitialEmployee));
 			} catch (final Exception e) {
-				modelAndView.addObject(
-					ViewModelNames.ERROR_MESSAGE.getValue(),
+				modelAndView.addObject(ViewModelNames.ERROR_MESSAGE.getValue(),
 					e.getMessage());
-				modelAndView.addObject(
-					ViewModelNames.EMPLOYEE.getValue(),
+				modelAndView.addObject(ViewModelNames.EMPLOYEE.getValue(),
 					(new Employee()).setIsInitialEmployee(isInitialEmployee));
 			}
 		}
-
-		modelAndView.addObject(
+		// Add created Id to mmployee types
+		modelAndView.addObject( 
 			ViewModelNames.EMPLOYEE_TYPES.getValue(),
 			EmployeeType.allEmployeeTypes());
-
 		return modelAndView;
 	}
-
-	// Properties
-	@Autowired
-	private EmployeeQuery employeeQuery;
-	
-	@Autowired
-	private ActiveEmployeeExistsQuery activeEmployeeExistsQuery;
 }

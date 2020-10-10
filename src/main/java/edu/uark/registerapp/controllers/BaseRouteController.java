@@ -19,52 +19,45 @@ import edu.uark.registerapp.models.entities.ActiveUserEntity;
 import edu.uark.registerapp.models.enums.EmployeeClassification;
 
 public abstract class BaseRouteController extends BaseController {
+	// Properties
+	@Autowired
+	private ValidateActiveUserCommand validateActiveUserCommand;
+	protected static final String REDIRECT_PREPEND = "redirect:";
+
 	protected ModelAndView setErrorMessageFromQueryString(
 		ModelAndView modelAndView,
 		final Map<String, String> queryParameters
 	) {
-
 		if (!queryParameters.containsKey(QueryParameterNames.ERROR_CODE.getValue())) {
 			return modelAndView;
 		}
-
 		try {
-			modelAndView =
-				this.setErrorMessageFromQueryString(
-					modelAndView,
-					Integer.parseInt(
-						queryParameters.get(
-							QueryParameterNames.ERROR_CODE.getValue())));
+			modelAndView = this.setErrorMessageFromQueryString(modelAndView,
+					Integer.parseInt(queryParameters.get(QueryParameterNames.ERROR_CODE.getValue())));
 		} catch (final NumberFormatException e) { }
-
 		return modelAndView;
 	}
 	protected ModelAndView setErrorMessageFromQueryString(
 		final ModelAndView modelAndView,
 		final Optional<Integer> errorCode
 	) {
-
 		if (!errorCode.isPresent()) {
 			return modelAndView;
 		}
-
 		return this.setErrorMessageFromQueryString(modelAndView, errorCode.get());
 	}
 
-	protected Optional<ActiveUserEntity> getCurrentUser(
-		final HttpServletRequest request
-	) {
-
+	protected Optional<ActiveUserEntity> getCurrentUser(final HttpServletRequest request) {
 		try {
 			return Optional.of(
-				this.validateActiveUserCommand
-					.setSessionKey(request.getSession().getId())
-					.execute());
+				this.validateActiveUserCommand.setSessionKey(request.getSession().getId()).execute()
+			);
 		} catch (final UnauthorizedException e) {
 			return Optional.ofNullable(null);
 		}
 	}
 
+	// If not elevated user, invalid request
 	protected ModelAndView buildInvalidSessionResponse() {
 		return new ModelAndView(
 			REDIRECT_PREPEND.concat(
@@ -74,15 +67,15 @@ public abstract class BaseRouteController extends BaseController {
 						QueryParameterMessages.SESSION_NOT_ACTIVE.getKeyAsString()))));
 	}
 
+	// Return if user is elevated
 	protected boolean isElevatedUser(final ActiveUserEntity activeUserEntity) {
-		return EmployeeClassification.isElevatedUser(
-			activeUserEntity.getClassification());
+		return EmployeeClassification.isElevatedUser(activeUserEntity.getClassification());
 	}
 
+	// If user is not elevated, do not give special permissions
 	protected ModelAndView buildNoPermissionsResponse() {
 		return this.buildNoPermissionsResponse(ViewNames.MAIN_MENU.getRoute());
 	}
-
 	protected ModelAndView buildNoPermissionsResponse(final String redirectRoute) {
 		return new ModelAndView(
 			REDIRECT_PREPEND.concat(
@@ -92,26 +85,18 @@ public abstract class BaseRouteController extends BaseController {
 						QueryParameterMessages.NO_PERMISSIONS_TO_VIEW.getKeyAsString()))));
 	}
 
-	protected static final String REDIRECT_PREPEND = "redirect:";
-
 	// Helper methods
 	private ModelAndView setErrorMessageFromQueryString(
 		final ModelAndView modelAndView,
 		final int errorCode
 	) {
-
 		final String errorMessage = QueryParameterMessages.mapMessage(errorCode);
-
+		// If the error message is blank, created model and view
 		if (!StringUtils.isBlank(errorMessage)) {
 			modelAndView.addObject(
 				ViewModelNames.ERROR_MESSAGE.getValue(),
 				errorMessage);
 		}
-
 		return modelAndView;
 	}
-
-	// Properties
-	@Autowired
-	private ValidateActiveUserCommand validateActiveUserCommand;
 }
