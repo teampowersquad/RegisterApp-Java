@@ -10,23 +10,26 @@ import edu.uark.registerapp.commands.VoidCommandInterface;
 import edu.uark.registerapp.models.entities.ActiveUserEntity;
 import edu.uark.registerapp.models.repositories.ActiveUserRepository;
 
-@Service
+@Service // Define service
 public class ActiveUserDeleteCommand implements VoidCommandInterface {
+	// Variable and Property
+	private String sessionKey;
+	@Autowired
+	private ActiveUserRepository activeUserRepository;
+
 	// Transaction to delete the activeuser record
 	@Transactional
 	@Override
 	public void execute() {
 		final Optional<ActiveUserEntity> activeUserEntity =
 			this.activeUserRepository.findBySessionKey(this.sessionKey);
-
-		// Validation of incoming employee request object within EmployeeSignInCommand
+		// Delete active user from repo if it is present
 		if (activeUserEntity.isPresent()) {
 			this.activeUserRepository.delete(activeUserEntity.get());
 		}
 	}
 
-	// Properties
-	private String sessionKey;
+	// Session Key getter and setter functions
 	public String getSessionKey() {
 		return this.sessionKey;
 	}
@@ -34,7 +37,4 @@ public class ActiveUserDeleteCommand implements VoidCommandInterface {
 		this.sessionKey = sessionKey;
 		return this;
 	}
-
-	@Autowired
-	private ActiveUserRepository activeUserRepository;
 }
