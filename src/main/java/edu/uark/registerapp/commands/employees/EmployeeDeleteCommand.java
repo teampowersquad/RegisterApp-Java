@@ -14,21 +14,25 @@ import edu.uark.registerapp.models.repositories.EmployeeRepository;
 
 @Service
 public class EmployeeDeleteCommand implements VoidCommandInterface {
+	// Variable and Property
+	private UUID employeeId;
+	@Autowired
+	private EmployeeRepository employeeRepository;
+
 	@Transactional
 	@Override
 	public void execute() {
 		final Optional<EmployeeEntity> employeeEntity =
 			this.employeeRepository.findById(this.employeeId);
-
-		if (!employeeEntity.isPresent()) { // No record with the associated record ID exists in the database.
+		// If no record with the associated record ID exists in the database throw exception
+		if (!employeeEntity.isPresent()) { 
 			throw new NotFoundException("Product");
 		}
-
+		// Delete employee
 		this.employeeRepository.delete(employeeEntity.get());
 	}
 
-	// Properties
-	private UUID employeeId;
+	// Getter and setter functions
 	public UUID getEmployeeId() {
 		return this.employeeId;
 	}
@@ -36,7 +40,4 @@ public class EmployeeDeleteCommand implements VoidCommandInterface {
 		this.employeeId = productId;
 		return this;
 	}
-	
-	@Autowired
-	private EmployeeRepository employeeRepository;
 }

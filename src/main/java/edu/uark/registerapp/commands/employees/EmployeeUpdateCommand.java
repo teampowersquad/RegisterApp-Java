@@ -19,16 +19,20 @@ import edu.uark.registerapp.models.repositories.EmployeeRepository;
 
 @Service
 public class EmployeeUpdateCommand implements ResultCommandInterface<Employee> {
+	// Variables and Property
+	private UUID employeeId;
+	private Employee apiEmployee;
+	@Autowired
+	private EmployeeRepository employeeRepository;
+	
 	@Override
 	public Employee execute() {
 		this.validateProperties();
-		
 		this.updateEmployeeEntity();
-
 		return this.apiEmployee;
 	}
 
-	// Helper methods
+	// Check that first and last name are not blank and classification is defined
 	private void validateProperties() {
 		if (StringUtils.isBlank(this.apiEmployee.getFirstName())) {
 			throw new UnprocessableEntityException("first name");
@@ -41,24 +45,19 @@ public class EmployeeUpdateCommand implements ResultCommandInterface<Employee> {
 		}
 	}
 
+	// Update the employee entity if it is present and save it
 	@Transactional
 	private void updateEmployeeEntity() {
 		final Optional<EmployeeEntity> queriedEmployeeEntity =
 			this.employeeRepository.findById(this.employeeId);
-
 		if (!queriedEmployeeEntity.isPresent()) {
-			throw new NotFoundException("Employee"); // No record with the associated record ID exists in the database.
+			throw new NotFoundException("Employee"); 
 		}
-
-		this.apiEmployee = queriedEmployeeEntity.get()
-			.synchronize(this.apiEmployee); // Synchronize any incoming changes for UPDATE to the database.
-
-		this.employeeRepository.save(queriedEmployeeEntity.get()); // Write, via an UPDATE, any changes to the database.
+		this.apiEmployee = queriedEmployeeEntity.get().synchronize(this.apiEmployee); 
+		this.employeeRepository.save(queriedEmployeeEntity.get()); 
 	}
 
-	// Property
-    private UUID employeeId;
-    // Getter and setter functions
+    // Employee Id getter and setter functions
 	public UUID getEmployeeId() {
 		return this.employeeId;
 	}
@@ -66,9 +65,8 @@ public class EmployeeUpdateCommand implements ResultCommandInterface<Employee> {
 		this.employeeId = employeeId;
 		return this;
 	}
-	// Property
-    private Employee apiEmployee;
-    // Getter and setter functions
+
+    // Api Employee getter and setter functions
 	public Employee getApiEmployee() {
 		return this.apiEmployee;
 	}
@@ -76,7 +74,4 @@ public class EmployeeUpdateCommand implements ResultCommandInterface<Employee> {
 		this.apiEmployee = apiEmployee;
 		return this;
 	}
-
-	@Autowired
-	private EmployeeRepository employeeRepository;
 }

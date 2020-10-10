@@ -14,26 +14,30 @@ import edu.uark.registerapp.models.repositories.EmployeeRepository;
 
 @Service
 public class EmployeeCreateCommand implements ResultCommandInterface<Employee> {
+	// Properties
+	@Autowired
+	private EmployeeRepository employeeRepository;
+	private Employee apiEmployee;
+
+	// Constructor
+	public EmployeeCreateCommand() {
+		this.isInitialEmployee = false;
+	}
+
 	@Override
 	public Employee execute() {
 		this.validateProperties();
-
 		if (this.isInitialEmployee) {
-			this.apiEmployee.setClassification(
-				EmployeeClassification.GENERAL_MANAGER.getClassification());
+			this.apiEmployee.setClassification(EmployeeClassification.GENERAL_MANAGER.getClassification());
 		}
-
-		 // Create a new ENTITY object from the API object details.
+		// Create a new ENTITY object from the API object details.
 		final EmployeeEntity employeeEntity =
 			this.employeeRepository.save(new EmployeeEntity(this.apiEmployee));
         // Set employee to database - map employee to object
 		this.apiEmployee.setId(employeeEntity.getId());
 		this.apiEmployee.setPassword(StringUtils.EMPTY);
 		this.apiEmployee.setCreatedOn(employeeEntity.getCreatedOn());
-		this.apiEmployee.setEmployeeId(
-			EmployeeHelper.padEmployeeId(
-				employeeEntity.getEmployeeId()));
-
+		this.apiEmployee.setEmployeeId(EmployeeHelper.padEmployeeId(employeeEntity.getEmployeeId()));
 		return this.apiEmployee;
 	}
 
@@ -55,8 +59,6 @@ public class EmployeeCreateCommand implements ResultCommandInterface<Employee> {
 		}
 	}
 
-	// Properties
-    private Employee apiEmployee;
     // Getter and setter functions
 	public Employee getApiEmployee() {
 		return this.apiEmployee;
@@ -65,7 +67,6 @@ public class EmployeeCreateCommand implements ResultCommandInterface<Employee> {
 		this.apiEmployee = apiEmployee;
 		return this;
 	}
-
 	private boolean isInitialEmployee;
 	public boolean getIsInitialEmployee() {
 		return this.isInitialEmployee;
@@ -73,15 +74,7 @@ public class EmployeeCreateCommand implements ResultCommandInterface<Employee> {
 	public EmployeeCreateCommand setIsInitialEmployee(
 		final boolean isInitialEmployee
 	) {
-
 		this.isInitialEmployee = isInitialEmployee;
 		return this;
-	}
-
-	@Autowired
-	private EmployeeRepository employeeRepository;
-
-	public EmployeeCreateCommand() {
-		this.isInitialEmployee = false;
 	}
 }

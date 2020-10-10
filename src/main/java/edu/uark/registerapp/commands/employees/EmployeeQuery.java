@@ -14,11 +14,15 @@ import edu.uark.registerapp.models.repositories.EmployeeRepository;
 
 @Service
 public class EmployeeQuery implements ResultCommandInterface<Employee> {
+	// Variable and Property
+	private UUID employeeId;
+	@Autowired
+	private EmployeeRepository employeeRepository;  
+
 	@Override
 	public Employee execute() {
 		final Optional<EmployeeEntity> employeeEntity =
 			this.employeeRepository.findById(this.employeeId);
-
         // Make sure employee entity is found
 		if (employeeEntity.isPresent()) {
 			return new Employee(employeeEntity.get());
@@ -27,8 +31,6 @@ public class EmployeeQuery implements ResultCommandInterface<Employee> {
 		}
 	}
 
-	// Properties
-    private UUID employeeId;
     // Getter and setter functions
 	public UUID getEmployeeId() {
 		return this.employeeId;
@@ -37,7 +39,4 @@ public class EmployeeQuery implements ResultCommandInterface<Employee> {
 		this.employeeId = employeeId;
 		return this;
 	}
-
-	@Autowired
-	private EmployeeRepository employeeRepository;  
 }

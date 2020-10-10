@@ -5,30 +5,25 @@ import java.security.NoSuchAlgorithmException;
 
 import org.apache.commons.lang3.StringUtils;
 
+// Employee helper helps employee folder files
 public class EmployeeHelper {
+	// Define eployee max length
+	private static final int EMPLOYEE_ID_MAXIMUM_LENGTH = 5;
+
+	// Employee Id padding and password hashing functions
 	public static String padEmployeeId(final int employeeId) {
 		final String employeeIdAsString = Integer.toString(employeeId);
-
 		return ((employeeIdAsString.length() < EMPLOYEE_ID_MAXIMUM_LENGTH)
-			? StringUtils.leftPad(
-				employeeIdAsString,
-				EMPLOYEE_ID_MAXIMUM_LENGTH,
-				"0")
+			? StringUtils.leftPad(employeeIdAsString, EMPLOYEE_ID_MAXIMUM_LENGTH, "0")
 			: employeeIdAsString);
 	}
-
 	public static byte[] hashPassword(final String password) {
 		try {
-			final MessageDigest messageDigest =
-				MessageDigest.getInstance("SHA-256");
-
+			final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 			messageDigest.update(password.getBytes());
-
 			return messageDigest.digest();
 		} catch (final NoSuchAlgorithmException e) {
 			return new byte[0];
 		}
 	}
-	
-	private static final int EMPLOYEE_ID_MAXIMUM_LENGTH = 5;
 }
