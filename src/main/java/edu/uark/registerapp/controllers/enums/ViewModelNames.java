@@ -1,6 +1,7 @@
 package edu.uark.registerapp.controllers.enums;
 
 public enum ViewModelNames {
+	// Enum elements
 	NOT_DEFINED(""),
 	ERROR_MESSAGE("errorMessage"),
 	PRODUCTS("products"), // Product listing
@@ -10,12 +11,13 @@ public enum ViewModelNames {
 	EMPLOYEE_TYPES("employeeTypes"),
 	IS_ELEVATED_USER("isElevatedUser");
 	
+	// Parameter
+	private String value;
+
+	// Getter and setter functions
 	public String getValue() {
 		return value;
 	}
-	
-	private String value;
-
 	private ViewModelNames(final String value) {
 		this.value = value;
 	}
