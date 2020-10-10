@@ -10,7 +10,7 @@ public enum QueryParameterMessages {
 	NO_PERMISSIONS_TO_VIEW(1101, "You do not have permission to view this resource."),
 	NO_PERMISSIONS_FOR_ACTION(1102, "You do not have permission to perform this action.");
 	
-	// Parameters
+	// Variables
 	private int key;
 	private String message;
 	private static Map<Integer, String> valueMap = null;

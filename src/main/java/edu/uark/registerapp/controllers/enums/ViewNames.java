@@ -8,7 +8,7 @@ public enum ViewNames {
 	SIGN_IN("signIn", "/"),
 	MAIN_MENU("mainMenu");
 	
-	// Parameters
+	// Variables
 	private String route;
 	private String viewName;
 

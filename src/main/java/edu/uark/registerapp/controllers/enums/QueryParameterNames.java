@@ -6,7 +6,7 @@ public enum QueryParameterNames {
 	ERROR_CODE("errorCode"), 
 	EMPLOYEE_ID("employeeId");
 
-	// Parameter
+	// Variable
 	private String value;
 	
 	// Getter and setter functions

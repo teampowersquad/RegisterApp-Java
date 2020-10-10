@@ -11,7 +11,7 @@ public enum ViewModelNames {
 	EMPLOYEE_TYPES("employeeTypes"),
 	IS_ELEVATED_USER("isElevatedUser");
 	
-	// Parameter
+	// Variables
 	private String value;
 
 	// Getter and setter functions
