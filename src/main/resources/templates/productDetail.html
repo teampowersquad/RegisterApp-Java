@@ -47,7 +47,8 @@
 			</table>
 		</div>
 
-		<div class="productActionsWrapper" th:class="(not ${isElevatedUser} OR not ${#strings.isEmpty(errorMessage)}) ? hidden : ''">
+		<div class="productActionsWrapper">
+			<div th:if="(not ${isElevatedUser} OR not ${#strings.isEmpty(errorMessage)}) ? hidden : ''">
 			<br />
 			<div id="deleteActionContainer" th:class="${product.isEmpty} ? hidden : ''">
 				<button id="deleteButton" type="button" class="action">Delete</button>
@@ -55,6 +56,7 @@
 				<br />
 			</div>
 			<button id="saveButton" type="button" class="action">Save</button>
+			</div>
 		</div>
 
 		<div id="productSavedAlertModal" class="modal animate-opacity-show">

@@ -22,7 +22,7 @@
 		</div>
 
 		<div class="productsWrapper">
-			<div th:class="not ${isElevatedUser} ? hidden : ''">
+			<div th:if="not ${isElevatedUser} ? hidden : ''">
 				<a href="/productDetail/" class="button">Create New</a>
 			</div>
 
