@@ -97,7 +97,6 @@ public class EmployeeEntity {
 
 	// Create column for Password
 	@Column(name = "password")
-
 	// Password getter and setter functions
 	public byte[] getPassword() {
 		return this.password;
@@ -109,7 +108,6 @@ public class EmployeeEntity {
 
 	// Create column to check if Active
 	@Column(name = "active")
-
 	// Is Active getter and setter functions
 	public boolean getIsActive() {
 		return this.isActive;
@@ -121,7 +119,6 @@ public class EmployeeEntity {
 
 	// Create column for Classification
 	@Column(name = "classification")
-
 	// Classification getter and setter functions
 	public int getClassification() {
 		return this.classification;
@@ -133,7 +130,6 @@ public class EmployeeEntity {
 
 	// Create column for Manager Id
 	@Column(name = "managerid")
-
 	// Manager Id getter and setter functions
 	public UUID getManagerId() {
 		return this.managerId;
@@ -146,7 +142,6 @@ public class EmployeeEntity {
 	// Create column to track when user was Created On
 	@Column(name = "createdon", insertable = false, updatable = false)
 	@Generated(GenerationTime.INSERT)
-
 	// Getter function to get what date employee was Created On
 	public LocalDateTime getCreatedOn() {
 		return this.createdOn;
