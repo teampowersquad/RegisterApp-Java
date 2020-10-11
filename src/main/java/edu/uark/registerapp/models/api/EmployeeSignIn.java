@@ -3,15 +3,17 @@ package edu.uark.registerapp.models.api;
 import org.apache.commons.lang3.StringUtils;
 
 public class EmployeeSignIn {
-    // Define properties
+    // Variables
     private String employeeId;
     private String password;
 
+    // Constructor
     public EmployeeSignIn() {
         this.employeeId = StringUtils.EMPTY;
         this.password = StringUtils.EMPTY;
     }
-    // Employee ID get & set functions
+    
+    // Employee ID getter and setter functions
     public String getEmployeeId() {
         return this.employeeId;
     }
@@ -19,7 +21,8 @@ public class EmployeeSignIn {
         this.employeeId = employeeId;
         return this;
     }
-    // Password get & set functions
+
+    // Password getter and setter functions
     public String getPassword() {
         return this.password;
     }
