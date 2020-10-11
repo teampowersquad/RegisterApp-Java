@@ -5,10 +5,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     
 });
 
-
+//Build a method to validate input on form submission[1,2]
 function validateForm() 
 {
 
+	//checking that the employee ID is numeric
 	const employeeIdEditElement = getEmployeeIdEditElement();
     if (isNaN(Number(employeeIdEditElement.value)) || (Number(employeeIdEditElement.value) <= 0)) 
     {
@@ -20,6 +21,7 @@ function validateForm()
 		return false;
 	}
 
+	//checking that the employee ID is not blank
 	const passwordEditElement = getPasswordEditElement();
     if ((passwordEditElement.value == null) || (passwordEditElement.value.trim() === "")) 
     {
