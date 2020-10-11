@@ -1,5 +1,6 @@
 // Click event handlers
-document.addEventListener("DOMContentLoaded", function(event) {
+document.addEventListener("DOMContentLoaded", function(event) 
+{
 	getStartTransactionActionElement().addEventListener("click", () => { 
 		displayError("Functionality has not yet been implemented."); 
 	});
@@ -22,18 +23,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 // Getters and setters
-function getViewProductsActionElement() {
+function getViewProductsActionElement() 
+{
 	return document.getElementById("viewProductsButton");
 }
-function getCreateEmployeeActionElement() {
+function getCreateEmployeeActionElement() 
+{
 	return document.getElementById("createEmployeeButton");
 }
-function getStartTransactionActionElement() {
+function getStartTransactionActionElement() 
+{
 	return document.getElementById("startTransactionButton");
 }
-function getProductSalesReportActionElement() {
+function getProductSalesReportActionElement() 
+{
 	return document.getElementById("productSalesReportButton");
 }
-function getCashierSalesReportActionElement() {
+function getCashierSalesReportActionElement() 
+{
 	return document.getElementById("cashierSalesReportButton");
 }
