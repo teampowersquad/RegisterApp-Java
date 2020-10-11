@@ -26,7 +26,7 @@
 			<button id="startTransactionButton" type="button" class="action" title="Functionality Not Available">Start Transaction</button>
 			<br /><br />
 			<button id="viewProductsButton" type="button" class="action">View Products</button>
-			<div th:class="not ${isElevatedUser} ? hidden : ''">
+			<div th:if="not ${isElevatedUser} ? hidden : ''">
 				<br />
 				<button id="createEmployeeButton" type="button" class="action">Employee Details</button>
 				<br /><br />
